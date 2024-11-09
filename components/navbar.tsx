@@ -1,5 +1,5 @@
 import { AppBar, Toolbar, Button, Typography } from "@mui/material";
-import { Sun, Moon } from "lucide-react";
+import { Sun, Moon, User } from "lucide-react";
 
 interface NavbarProps {
   toggleTheme: () => void;
@@ -10,13 +10,23 @@ const Navbar: React.FC<NavbarProps> = ({ toggleTheme, themeMode }) => {
   return (
     <AppBar position="sticky" color="transparent" sx={{ boxShadow: "none" }}>
       <Toolbar>
-        <Typography
-          variant="h1"
-          component="div"
-          sx={{ flexGrow: 1, fontSize: "30px" }}
-        >
+        <Typography variant="h1" sx={{ flexGrow: 1, fontSize: "30px" }}>
           همکار من
         </Typography>
+
+        <Button
+          aria-label="jump to profile"
+          color="inherit"
+          href="/profile"
+          sx={{
+            backgroundColor: "primary.light",
+            padding: 0.8,
+            borderRadius: "10px",
+            marginX: 0.4,
+          }}
+        >
+          <User />
+        </Button>
 
         <Button
           onClick={toggleTheme}
