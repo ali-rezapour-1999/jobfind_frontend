@@ -2,30 +2,63 @@ import { createTheme } from "@mui/material/styles";
 
 export const lightTheme = createTheme({
   typography: {
-    fontFamily: "dirooz",
+    h1: {
+      fontFamily: `'Lalezar'`,
+    },
   },
   palette: {
     mode: "light",
     primary: {
-      main: "#1976d2",
+      main: "#16423C",
+      light: "rgba(0,0,0,.1)",
     },
     secondary: {
-      main: "#dc004e",
+      main: "#C4DAD2",
+    },
+  },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          borderRadius: "3px",
+          padding: 0,
+          textTransform: "none",
+          minWidth: 0,
+          minHeight: 0,
+        },
+      },
     },
   },
 });
 
 export const darkTheme = createTheme({
   typography: {
-    fontFamily: " lalezar",
+    h1: {
+      fontFamily: `'Lalezar'`,
+    },
   },
   palette: {
     mode: "dark",
     primary: {
-      main: "#90caf9",
+      main: "#6A9C89",
+      light: "rgba(255,255,255,.1)",
     },
     secondary: {
-      main: "#f48fb1",
+      main: "#C4DAD2",
+    },
+  },
+
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          borderRadius: "3px",
+          padding: 0,
+          textTransform: "none",
+          minWidth: 0,
+          minHeight: 0,
+        },
+      },
     },
   },
 });
