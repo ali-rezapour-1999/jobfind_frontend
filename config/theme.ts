@@ -4,6 +4,7 @@ export const lightTheme = createTheme({
   typography: {
     h1: {
       fontFamily: `'Lalezar'`,
+      color: "#16423C",
     },
   },
   palette: {
@@ -35,6 +36,7 @@ export const darkTheme = createTheme({
   typography: {
     h1: {
       fontFamily: `'Lalezar'`,
+      color: "#6A9C89",
     },
   },
   palette: {
