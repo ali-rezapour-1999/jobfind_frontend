@@ -5,6 +5,7 @@ import { AppProps } from "next/app";
 import { ThemeProvider, useTheme } from "@/context/themeContext";
 import { lightTheme, darkTheme } from "@/config/theme";
 import Head from "next/head";
+import "@/styles/globals.css";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (

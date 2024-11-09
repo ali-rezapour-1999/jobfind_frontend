@@ -1,6 +1,9 @@
 import { createTheme } from "@mui/material/styles";
 
 export const lightTheme = createTheme({
+  typography: {
+    fontFamily: "dirooz",
+  },
   palette: {
     mode: "light",
     primary: {
@@ -13,6 +16,9 @@ export const lightTheme = createTheme({
 });
 
 export const darkTheme = createTheme({
+  typography: {
+    fontFamily: " lalezar",
+  },
   palette: {
     mode: "dark",
     primary: {
