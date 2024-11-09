@@ -6,7 +6,6 @@ const Home: React.FC = () => {
   return (
     <Wrapper>
       <Typography>علی رض پور</Typography>
-      <div>علی راض پور</div>
     </Wrapper>
   );
 };

@@ -6,6 +6,10 @@ export const lightTheme = createTheme({
       fontFamily: `'Lalezar'`,
       color: "#16423C",
     },
+
+    h2: {
+      fontFamily: `'Lalezar'`,
+    },
   },
   palette: {
     mode: "light",
@@ -37,6 +41,9 @@ export const darkTheme = createTheme({
     h1: {
       fontFamily: `'Lalezar'`,
       color: "#6A9C89",
+    },
+    h2: {
+      fontFamily: `'Lalezar'`,
     },
   },
   palette: {

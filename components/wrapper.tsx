@@ -11,7 +11,7 @@ interface Propos {
 const Wrapper = ({ children }: Propos) => {
   const { themeMode, toggleTheme } = useTheme();
   return (
-    <Box sx={{ maxWidth: "1400px", mx: "auto" }}>
+    <Box component="main" sx={{ maxWidth: "1400px", mx: "auto" }}>
       <Navbar themeMode={themeMode} toggleTheme={toggleTheme} />
       {children}
     </Box>
