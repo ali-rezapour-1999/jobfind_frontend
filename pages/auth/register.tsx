@@ -1,13 +1,83 @@
-import Wrapper from "@/components/wrapper";
 import * as React from "react";
-import Box from "@mui/material/Box";
-import { Button, Link, Typography } from "@mui/material";
+import { Button, Link, Box, Typography } from "@mui/material";
+import Wrapper from "@/components/wrapper";
 import AuthInput from "@/components/input";
 import { CardContainer, Container } from "@/components/container";
 
+interface inputProps {
+  phone_number?: string;
+  password?: string;
+  repassword?: string;
+}
+interface errorProps {
+  error: boolean | false;
+  errorItem: string;
+  massage: string;
+}
+
 const Register = () => {
+  const [inputData, setInputData] = React.useState<inputProps | null>(null);
+  const [error, setError] = React.useState<errorProps | null>(null);
+  const phoneValidation = (phone: string): boolean => {
+    const iranPhoneNumberRegex = /^(?:\+98|0)?9\d{9}$/;
+    return iranPhoneNumberRegex.test(phone);
+  };
+
+  const inputHandler = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    const { name, value } = e.target;
+
+    setInputData((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+  console.log(error);
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    if (inputData?.repassword && inputData.repassword == inputData.password) {
+      setError({
+        massage: "رمز عبور با تکرارش برابر نیست!",
+        errorItem: "repassword",
+        error: true,
+      });
+    } else {
+      setError({
+        massage: "",
+        errorItem: "",
+        error: true,
+      });
+    }
+    if (inputData?.password && inputData.password.length > 6) {
+      setError({
+        massage: "رمز عبور باید بیشتر زا ۶ حروف با عدد باشد.",
+        errorItem: "password",
+        error: true,
+      });
+    } else {
+      setError({
+        massage: "",
+        errorItem: "",
+        error: true,
+      });
+      if (inputData?.phone_number && phoneValidation(inputData.phone_number)) {
+        setError({
+          massage: "شماره تلفن وارد شده صحیح تیست",
+          errorItem: "phone_number",
+          error: true,
+        });
+      } else {
+        setError({
+          massage: "",
+          errorItem: "",
+          error: true,
+        });
+      }
+      if (error?.errorItem && !error.errorItem) {
+        console.log("alirg");
+      }
+    }
   };
 
   return (
@@ -37,8 +107,12 @@ const Register = () => {
               name="phone_number"
               type="text"
               placeholder="شماره همراه خود را وارد کنید"
-              color="primary"
-              inputchangeHandler={() => console.log("alirg")}
+              color={
+                error?.error && error.errorItem == "phone_number"
+                  ? "error"
+                  : "primary"
+              }
+              inputchangeHandler={inputHandler}
             />
 
             <AuthInput
@@ -47,18 +121,26 @@ const Register = () => {
               name="password"
               type="password"
               placeholder="رمز عبور خود را وارد کنید"
-              color="primary"
-              inputchangeHandler={() => console.log("alirg")}
+              color={
+                error?.error && error.errorItem == "password"
+                  ? "error"
+                  : "primary"
+              }
+              inputchangeHandler={inputHandler}
             />
 
             <AuthInput
               lable="تکرار رمز عبور"
-              id="password"
-              name="password"
+              id="repassword"
+              name="repassword"
               type="password"
               placeholder="رمز عبور خود را مجدد تکرار کنید"
-              color="primary"
-              inputchangeHandler={() => console.log("alirg")}
+              color={
+                error?.error && error.errorItem == "repassword"
+                  ? "error"
+                  : "primary"
+              }
+              inputchangeHandler={inputHandler}
             />
 
             <Button

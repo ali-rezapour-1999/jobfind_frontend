@@ -7,7 +7,7 @@ interface Props {
   type: string;
   color?: "error" | "primary" | "secondary" | "info" | "success" | "warning";
   id?: string;
-  inputchangeHandler: () => void;
+  inputchangeHandler: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const AuthInput: React.FC<Props> = ({
