@@ -12,7 +12,6 @@ import {
   FormLabel,
 } from "@mui/material";
 import MuiCard from "@mui/material/Card";
-import AuthInput from "@/components/input";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -35,7 +34,7 @@ const Card = styled(MuiCard)(({ theme }) => ({
   }),
 }));
 
-const SignUpContainer = styled(Stack)(({ theme }) => ({
+const SignInContainer = styled(Stack)(({ theme }) => ({
   height: "calc((1 - var(--template-frame-height, 0)) * 80dvh)",
   minHeight: "100%",
   padding: theme.spacing(2),
@@ -53,49 +52,37 @@ const SignUpContainer = styled(Stack)(({ theme }) => ({
     backgroundRepeat: "no-repeat",
     ...theme.applyStyles("dark", {
       backgroundImage:
-        "radial-gradient(at 50% 50%, hsla(180, 100%, 16%, 0.5), hsl(220, 30%, 5%))",
-    }),
-
-    ...theme.applyStyles("light", {
-      backgroundImage:
-        "radial-gradient(at 50% 50%, hsla(120, 100%, 85%, 0.5), hsl(220, 30%, 100%))",
+        "radial-gradient(at 50% 50%, hsla(210, 100%, 16%, 0.5), hsl(220, 30%, 5%))",
     }),
   },
 }));
 
 const Register = () => {
+  const [passwordError, setPasswordError] = React.useState(false);
+  const [passwordErrorMessage, setPasswordErrorMessage] = React.useState("");
+  const [numberError, setNumberError] = React.useState(false);
+  const [numberErrorMessage, setNumberErrorMessage] = React.useState("");
+
   const validateInputs = () => {
     const phone_number = document.getElementById(
       "phone_number",
     ) as HTMLInputElement;
     const password = document.getElementById("password") as HTMLInputElement;
-    const repassword = document.getElementById(
-      "repassword",
-    ) as HTMLInputElement;
 
     let isValid = true;
 
     if (!password.value || password.value.length < 6) {
       setPasswordError(true);
-      setPasswordErrorMessage("به یه رمز بیشتر از ۶ رقم نیاز داری!");
+      setPasswordErrorMessage("رمز عبور باید بیشتر از ۶ رقم باشه!");
       isValid = false;
     } else {
       setPasswordError(false);
       setPasswordErrorMessage("");
     }
 
-    if (repassword !== password) {
-      setRePasswordError(true);
-      setRePasswordErrorMessage("با کلمه عبور تطابق ندارد.");
-      isValid = false;
-    } else {
-      setRePasswordError(false);
-      setRePasswordErrorMessage("");
-    }
-
     if (!phone_number.value || phone_number.value.length < 1) {
       setNumberError(true);
-      setNumberErrorMessage("به شماره همراه نیازه");
+      setNumberErrorMessage("شماره همراه is required.");
       isValid = false;
     } else {
       setNumberError(false);
@@ -114,7 +101,7 @@ const Register = () => {
 
   return (
     <Wrapper>
-      <SignUpContainer direction="column" justifyContent="space-between">
+      <SignInContainer direction="column" justifyContent="space-between">
         <Card variant="outlined">
           <Typography
             component="h2"
@@ -126,33 +113,48 @@ const Register = () => {
               mb: "15px",
             }}
           >
-            ثبت نام در همکار من
+            ورود به همکار من
           </Typography>
           <Box
             component="form"
             onSubmit={handleSubmit}
             sx={{ display: "flex", flexDirection: "column", gap: 2 }}
           >
-            <AuthInput
-              lable="شماره همراه"
-              id="phone_number"
-              name="phone_number"
-              type="text"
-              placeholder="شماره همراه خود را وارد کنید"
-              color="primary"
-              inputchangeHandler={() => console.log("alirg")}
-            />
-
-            <AuthInput
-              lable="رمز عبور"
-              id="phone_number"
-              name="phone_number"
-              type="text"
-              placeholder="شماره همراه خود را وارد کنید"
-              color="primary"
-              inputchangeHandler={() => console.log("alirg")}
-            />
-
+            <FormControl>
+              <FormLabel htmlFor="phone_number" sx={{ mb: "10px" }}>
+                شماره همراه
+              </FormLabel>
+              <TextField
+                autoComplete="email"
+                name="email"
+                required
+                fullWidth
+                id="phone_number"
+                placeholder="شماره همراه را بدون صفر وارد کنید."
+                error={numberError}
+                helperText={numberErrorMessage}
+                color={numberError ? "error" : "primary"}
+                sx={{ fontSize: "14px" }}
+              />
+            </FormControl>
+            <FormControl>
+              <FormLabel htmlFor="password" sx={{ mb: "10px" }}>
+                کلمه عبور
+              </FormLabel>
+              <TextField
+                required
+                fullWidth
+                name="password"
+                placeholder="•••••••••"
+                type="password"
+                id="password"
+                autoComplete="new-password"
+                variant="outlined"
+                error={passwordError}
+                helperText={passwordErrorMessage}
+                color={passwordError ? "error" : "primary"}
+              />
+            </FormControl>
             <Button
               type="submit"
               fullWidth
@@ -160,15 +162,15 @@ const Register = () => {
               onClick={validateInputs}
               sx={{ paddingY: "8px", fontSize: "18px" }}
             >
-              ثبت نام
+              ورود
             </Button>
             <Typography sx={{ textAlign: "center" }}>
-              حساب کاربری دارید؟{" "}
+              حساب کاربری ندارم؟{" "}
               <span>
                 <Link
-                  href="/auth/login/"
+                  href="/auth/register"
                   variant="body2"
-                  sx={{ alignSelf: "center" }}
+                  sx={{ alignSelf: "center", fontSize: "17px" }}
                 >
                   ورود
                 </Link>
@@ -176,7 +178,7 @@ const Register = () => {
             </Typography>
           </Box>
         </Card>
-      </SignUpContainer>
+      </SignInContainer>
     </Wrapper>
   );
 };
