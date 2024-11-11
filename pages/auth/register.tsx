@@ -1,16 +1,7 @@
 import Wrapper from "@/components/wrapper";
 import * as React from "react";
 import Box from "@mui/material/Box";
-import {
-  Button,
-  FormControl,
-  Link,
-  TextField,
-  Typography,
-  Stack,
-  styled,
-  FormLabel,
-} from "@mui/material";
+import { Button, Link, Typography, Stack, styled } from "@mui/material";
 import MuiCard from "@mui/material/Card";
 import AuthInput from "@/components/input";
 
@@ -64,52 +55,8 @@ const SignUpContainer = styled(Stack)(({ theme }) => ({
 }));
 
 const Register = () => {
-  const validateInputs = () => {
-    const phone_number = document.getElementById(
-      "phone_number",
-    ) as HTMLInputElement;
-    const password = document.getElementById("password") as HTMLInputElement;
-    const repassword = document.getElementById(
-      "repassword",
-    ) as HTMLInputElement;
-
-    let isValid = true;
-
-    if (!password.value || password.value.length < 6) {
-      setPasswordError(true);
-      setPasswordErrorMessage("به یه رمز بیشتر از ۶ رقم نیاز داری!");
-      isValid = false;
-    } else {
-      setPasswordError(false);
-      setPasswordErrorMessage("");
-    }
-
-    if (repassword !== password) {
-      setRePasswordError(true);
-      setRePasswordErrorMessage("با کلمه عبور تطابق ندارد.");
-      isValid = false;
-    } else {
-      setRePasswordError(false);
-      setRePasswordErrorMessage("");
-    }
-
-    if (!phone_number.value || phone_number.value.length < 1) {
-      setNumberError(true);
-      setNumberErrorMessage("به شماره همراه نیازه");
-      isValid = false;
-    } else {
-      setNumberError(false);
-      setNumberErrorMessage("");
-    }
-
-    return isValid;
-  };
-
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    if (numberError || passwordError) {
-      event.preventDefault();
-      return;
-    }
+    event.preventDefault();
   };
 
   return (
@@ -145,10 +92,20 @@ const Register = () => {
 
             <AuthInput
               lable="رمز عبور"
-              id="phone_number"
-              name="phone_number"
-              type="text"
-              placeholder="شماره همراه خود را وارد کنید"
+              id="password"
+              name="password"
+              type="password"
+              placeholder="رمز عبور خود را وارد کنید"
+              color="primary"
+              inputchangeHandler={() => console.log("alirg")}
+            />
+
+            <AuthInput
+              lable="تکرار رمز عبور"
+              id="password"
+              name="password"
+              type="password"
+              placeholder="رمز عبور خود را مجدد تکرار کنید"
               color="primary"
               inputchangeHandler={() => console.log("alirg")}
             />
@@ -157,7 +114,6 @@ const Register = () => {
               type="submit"
               fullWidth
               variant="contained"
-              onClick={validateInputs}
               sx={{ paddingY: "8px", fontSize: "18px" }}
             >
               ثبت نام
