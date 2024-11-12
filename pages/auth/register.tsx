@@ -12,78 +12,69 @@ interface inputProps {
 interface errorProps {
   error: boolean | false;
   errorItem: string;
-  massage: string;
+  message: string;
 }
 
 const Register = () => {
   const [inputData, setInputData] = React.useState<inputProps | null>(null);
   const [error, setError] = React.useState<errorProps | null>(null);
   const phoneValidation = (phone: string): boolean => {
-    const iranPhoneNumberRegex = /^(?:\+98|0)?9\d{9}$/;
+    const iranPhoneNumberRegex = /^0?9[0-9]{9}$/;
     return iranPhoneNumberRegex.test(phone);
   };
 
   const inputHandler = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target;
-
     setInputData((prevState) => ({
       ...prevState,
       [name]: value,
     }));
   };
-  console.log(error);
 
+  const setErrorMessages = (
+    message: string,
+    errorItem: string,
+    error: boolean,
+  ) => {
+    setError({
+      message: message,
+      errorItem: errorItem,
+      error: error,
+    });
+  };
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (inputData?.repassword && inputData.repassword == inputData.password) {
-      setError({
-        massage: "رمز عبور با تکرارش برابر نیست!",
-        errorItem: "repassword",
-        error: true,
-      });
-    } else {
-      setError({
-        massage: "",
-        errorItem: "",
-        error: false,
-      });
+    if (inputData?.repassword !== inputData?.password) {
+      setErrorMessages("رمز عبور با تکرارش برابر نیست!", "repassword", true);
+      return;
     }
-    if (inputData?.password && inputData.password.length > 6) {
-      setError({
-        massage: "رمز عبور باید بیشتر زا ۶ حروف با عدد باشد.",
-        errorItem: "password",
-        error: true,
-      });
-    } else {
-      setError({
-        massage: "",
-        errorItem: "",
-        error: false,
-      });
-      if (inputData?.phone_number && phoneValidation(inputData.phone_number)) {
-        setError({
-          massage: "شماره تلفن وارد شده صحیح تیست",
-          errorItem: "phone_number",
-          error: true,
-        });
-      } else {
-        setError({
-          massage: "",
-          errorItem: "",
-          error: false,
-        });
-      }
+
+    if (inputData?.password && inputData.password.length <= 6) {
+      setErrorMessages(
+        "رمز عبور باید بیشتر از ۶ حروف با عدد باشد.",
+        "password",
+        true,
+      );
+      return;
     }
+
+    if (!phoneValidation(inputData?.phone_number || "")) {
+      setErrorMessages("شماره تلفن وارد شده صحیح نیست", "phone_number", true);
+      return;
+    }
+
+    setErrorMessages("", "", false);
+    console.log("Form submitted successfully!");
   };
 
   return (
     <Wrapper>
       <Container direction="column" justifyContent="space-between">
         <CardContainer variant="outlined">
-          {error?.error ? (
-            <Snackbar open={error.error} message={error.massage} />
-          ) : null}
+          {error?.error && (
+            <Snackbar color="red" open={error.error} message={error.message} />
+          )}
           <Typography
             component="h2"
             variant="h2"
@@ -107,11 +98,8 @@ const Register = () => {
               name="phone_number"
               type="text"
               placeholder="شماره همراه خود را وارد کنید"
-              color={
-                error?.error && error.errorItem == "phone_number"
-                  ? "error"
-                  : "primary"
-              }
+              required={true}
+              color="primary"
               inputchangeHandler={inputHandler}
             />
 
@@ -120,12 +108,9 @@ const Register = () => {
               id="password"
               name="password"
               type="password"
+              required={true}
               placeholder="رمز عبور خود را وارد کنید"
-              color={
-                error?.error && error.errorItem == "password"
-                  ? "error"
-                  : "primary"
-              }
+              color="primary"
               inputchangeHandler={inputHandler}
             />
 
@@ -134,12 +119,9 @@ const Register = () => {
               id="repassword"
               name="repassword"
               type="password"
+              required={true}
               placeholder="رمز عبور خود را مجدد تکرار کنید"
-              color={
-                error?.error && error.errorItem == "repassword"
-                  ? "error"
-                  : "primary"
-              }
+              color="primary"
               inputchangeHandler={inputHandler}
             />
 

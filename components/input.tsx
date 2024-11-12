@@ -8,6 +8,7 @@ interface Props {
   color?: "error" | "primary" | "secondary" | "info" | "success" | "warning";
   id?: string;
   inputchangeHandler: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  required: boolean;
 }
 
 const AuthInput: React.FC<Props> = ({
@@ -18,6 +19,7 @@ const AuthInput: React.FC<Props> = ({
   color,
   inputchangeHandler,
   id,
+  required,
 }) => {
   return (
     <FormControl sx={{ marginY: "10px" }}>
@@ -32,6 +34,7 @@ const AuthInput: React.FC<Props> = ({
         color={color}
         onChange={inputchangeHandler}
         sx={{ paddingBottom: "5px" }}
+        required={required}
       />
     </FormControl>
   );
