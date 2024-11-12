@@ -21,7 +21,7 @@ const AuthInput: React.FC<Props> = ({
 }) => {
   return (
     <FormControl sx={{ marginY: "10px" }}>
-      <FormLabel htmlFor={id} sx={{ fontSize: "10px" }}>
+      <FormLabel htmlFor={id} sx={{ fontSize: "14px" }}>
         {lable}
       </FormLabel>
       <Input
@@ -31,6 +31,7 @@ const AuthInput: React.FC<Props> = ({
         placeholder={placeholder}
         color={color}
         onChange={inputchangeHandler}
+        sx={{ paddingBottom: "5px" }}
       />
     </FormControl>
   );

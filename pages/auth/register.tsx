@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Button, Link, Box, Typography } from "@mui/material";
+import { Button, Link, Box, Typography, Snackbar } from "@mui/material";
 import Wrapper from "@/components/wrapper";
 import AuthInput from "@/components/input";
 import { CardContainer, Container } from "@/components/container";
@@ -46,7 +46,7 @@ const Register = () => {
       setError({
         massage: "",
         errorItem: "",
-        error: true,
+        error: false,
       });
     }
     if (inputData?.password && inputData.password.length > 6) {
@@ -59,7 +59,7 @@ const Register = () => {
       setError({
         massage: "",
         errorItem: "",
-        error: true,
+        error: false,
       });
       if (inputData?.phone_number && phoneValidation(inputData.phone_number)) {
         setError({
@@ -71,11 +71,8 @@ const Register = () => {
         setError({
           massage: "",
           errorItem: "",
-          error: true,
+          error: false,
         });
-      }
-      if (error?.errorItem && !error.errorItem) {
-        console.log("alirg");
       }
     }
   };
@@ -84,6 +81,9 @@ const Register = () => {
     <Wrapper>
       <Container direction="column" justifyContent="space-between">
         <CardContainer variant="outlined">
+          {error?.error ? (
+            <Snackbar open={error.error} message={error.massage} />
+          ) : null}
           <Typography
             component="h2"
             variant="h2"
