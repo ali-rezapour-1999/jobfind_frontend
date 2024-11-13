@@ -1,8 +1,16 @@
 import * as React from "react";
-import { Button, Link, Box, Typography, Snackbar } from "@mui/material";
+import {
+  Button,
+  Link,
+  Box,
+  Typography,
+  Snackbar,
+  SnackbarContent,
+} from "@mui/material";
 import Wrapper from "@/components/wrapper";
 import AuthInput from "@/components/input";
 import { CardContainer, Container } from "@/components/container";
+import { useTheme } from "@emotion/react";
 
 interface inputProps {
   phone_number?: string;
@@ -16,6 +24,7 @@ interface errorProps {
 }
 
 const Register = () => {
+  const theme = useTheme();
   const [inputData, setInputData] = React.useState<inputProps | null>(null);
   const [error, setError] = React.useState<errorProps | null>(null);
   const phoneValidation = (phone: string): boolean => {
@@ -23,57 +32,63 @@ const Register = () => {
     return iranPhoneNumberRegex.test(phone);
   };
 
+  const validateField = (name: string, value: string): void => {
+    // Validation logic for different fields
+    if (name === "phone_number" && !phoneValidation(value)) {
+      setError({
+        error: true,
+        errorItem: name,
+        message: "لطفا شماره همراه بدون 0 و صحیح وارد کنید.",
+      });
+    } else if (name === "password" && value.length < 6) {
+      setError({
+        error: true,
+        errorItem: name,
+        message: "پسورد باید بیشتر از ۶ حروف یا عدد باشد!",
+      });
+    } else {
+      setError(null);
+    }
+  };
+
   const inputHandler = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target;
+
     setInputData((prevState) => ({
       ...prevState,
       [name]: value,
     }));
+
+    validateField(name, value);
   };
 
-  const setErrorMessages = (
-    message: string,
-    errorItem: string,
-    error: boolean,
-  ) => {
-    setError({
-      message: message,
-      errorItem: errorItem,
-      error: error,
-    });
-  };
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (inputData?.repassword !== inputData?.password) {
-      setErrorMessages("رمز عبور با تکرارش برابر نیست!", "repassword", true);
+      setError({
+        error: true,
+        errorItem: "repassword",
+        message: "تکرار رمز عبور با خود رمز عبور برار نیست!",
+      });
       return;
     }
 
-    if (inputData?.password && inputData.password.length <= 6) {
-      setErrorMessages(
-        "رمز عبور باید بیشتر از ۶ حروف با عدد باشد.",
-        "password",
-        true,
-      );
-      return;
+    if (!error) {
+      console.log("Form submitted successfully!");
     }
-
-    if (!phoneValidation(inputData?.phone_number || "")) {
-      setErrorMessages("شماره تلفن وارد شده صحیح نیست", "phone_number", true);
-      return;
-    }
-
-    setErrorMessages("", "", false);
-    console.log("Form submitted successfully!");
   };
-
   return (
     <Wrapper>
       <Container direction="column" justifyContent="space-between">
         <CardContainer variant="outlined">
           {error?.error && (
-            <Snackbar color="red" open={error.error} message={error.message} />
+            <Snackbar open={error.error} autoHideDuration={4000}>
+              <SnackbarContent
+                sx={{ background: "#FA4032", color: "white" }}
+                message={error.message}
+              />
+            </Snackbar>
           )}
           <Typography
             component="h2"
