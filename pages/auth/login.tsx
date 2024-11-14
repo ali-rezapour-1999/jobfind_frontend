@@ -4,10 +4,10 @@ import Wrapper from "@/components/wrapper";
 import AuthInput from "@/components/input";
 import { CardContainer, Container } from "@/components/container";
 import baseApi from "@/config/baseApi";
-import axios from "axios";
 import { useRouter } from "next/router";
 import useAuthStore from "@/context/useAuthStore";
 import Notification from "@/components/notification";
+import axios from "axios";
 
 interface inputProps {
   email?: string;
@@ -27,6 +27,14 @@ const Register = () => {
   const loading = useAuthStore((state) => state.loading);
   const setLoading = useAuthStore((state) => state.setLoading);
   const setUser = useAuthStore((state) => state.login);
+
+  React.useEffect(() => {
+    const profile_id = localStorage.getItem("item_pro");
+
+    if (profile_id) {
+      router.push(`/profile/${profile_id}`);
+    }
+  }, [router]);
 
   const validateField = (name: string, value: string): void => {
     if (name === "password" && value.length < 6) {
@@ -63,6 +71,7 @@ const Register = () => {
         });
         const token = res.data;
         localStorage.setItem("authToken", token.access);
+        localStorage.setItem("item_pro", token.profile_id);
         setUser(inputData?.email || "", token.access);
 
         setNotify({
@@ -73,7 +82,13 @@ const Register = () => {
 
         router.push("/");
       } catch (err) {
-        console.log(err);
+        if (axios.isAxiosError(err) && err.response?.status === 401) {
+          setNotify({
+            notify: true,
+            message: "رمز عبور وارد شده صیحیح نیست لطفا دوباره تلاش کنید!",
+            notifyItem: "error",
+          });
+        }
       } finally {
         setLoading(false);
       }
@@ -144,7 +159,7 @@ const Register = () => {
               حساب کاربری ندارید؟{" "}
               <span>
                 <Link
-                  href="/auth/login/"
+                  href="/auth/register/"
                   variant="body2"
                   sx={{ alignSelf: "center" }}
                 >

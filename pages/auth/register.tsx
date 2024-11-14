@@ -27,6 +27,13 @@ const Register = () => {
   const loading = useAuthStore((state) => state.loading);
   const setLoading = useAuthStore((state) => state.setLoading);
 
+  React.useEffect(() => {
+    const profile_id = localStorage.getItem("item_pro");
+    if (profile_id) {
+      router.push(`/profile/${profile_id}`);
+    }
+  }, [router]);
+
   const validateField = (name: string, value: string): void => {
     if (name === "password" && value.length < 6) {
       setNotify({
