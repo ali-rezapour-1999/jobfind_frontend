@@ -10,7 +10,6 @@ import {
 import Wrapper from "@/components/wrapper";
 import AuthInput from "@/components/input";
 import { CardContainer, Container } from "@/components/container";
-import { useTheme } from "@emotion/react";
 
 interface inputProps {
   phone_number?: string;
@@ -24,17 +23,15 @@ interface errorProps {
 }
 
 const Register = () => {
-  const theme = useTheme();
   const [inputData, setInputData] = React.useState<inputProps | null>(null);
   const [error, setError] = React.useState<errorProps | null>(null);
   const phoneValidation = (phone: string): boolean => {
-    const iranPhoneNumberRegex = /^0?9[0-9]{9}$/;
+    const iranPhoneNumberRegex = /^9[0-9]{9}$/;
     return iranPhoneNumberRegex.test(phone);
   };
 
   const validateField = (name: string, value: string): void => {
-    // Validation logic for different fields
-    if (name === "phone_number" && !phoneValidation(value)) {
+    if (name === "phone_number" && value.startsWith("0")) {
       setError({
         error: true,
         errorItem: name,
@@ -62,6 +59,12 @@ const Register = () => {
     validateField(name, value);
   };
 
+  React.useEffect(() => {
+    if (inputData?.phone_number && !inputData?.phone_number.startsWith("0")) {
+      setError(null);
+    }
+  }, [inputData?.phone_number]);
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -69,15 +72,25 @@ const Register = () => {
       setError({
         error: true,
         errorItem: "repassword",
-        message: "تکرار رمز عبور با خود رمز عبور برار نیست!",
+        message:
+          "مثل این که تکرار رمزت با رمزت یکی نیستش یه بار دیگه بررسی کن لطفا!",
       });
+
       return;
+    }
+    if (!inputData?.phone_number || !phoneValidation(inputData.phone_number)) {
+      setError({
+        error: true,
+        errorItem: "phone_number",
+        message: "شماره همراه وارد شده صحیح نیست!",
+      });
     }
 
     if (!error) {
       console.log("Form submitted successfully!");
     }
   };
+
   return (
     <Wrapper>
       <Container direction="column" justifyContent="space-between">
@@ -145,6 +158,7 @@ const Register = () => {
               fullWidth
               variant="contained"
               sx={{ paddingY: "8px", fontSize: "18px" }}
+              disabled={error?.error ? true : false}
             >
               ثبت نام
             </Button>
