@@ -2,7 +2,7 @@
 import React from "react";
 import Navbar from "./navbar";
 import { useTheme } from "@/context/themeContext";
-import { Box } from "@mui/material";
+import { Container } from "./container";
 
 interface Propos {
   children: React.ReactNode;
@@ -11,10 +11,10 @@ interface Propos {
 const Wrapper = ({ children }: Propos) => {
   const { themeMode, toggleTheme } = useTheme();
   return (
-    <Box component="main" sx={{ maxWidth: "1400px", mx: "auto" }}>
+    <Container sx={{ maxWidth: "1400px", mx: "auto" }}>
       <Navbar themeMode={themeMode} toggleTheme={toggleTheme} />
       {children}
-    </Box>
+    </Container>
   );
 };
 

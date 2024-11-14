@@ -2,7 +2,7 @@ import { styled, Stack } from "@mui/material";
 import MuiCard from "@mui/material/Card";
 
 export const Container = styled(Stack)(({ theme }) => ({
-  height: "calc((1 - var(--template-frame-height, 0)) * 80dvh)",
+  height: "calc((1 - var(--template-frame-height, 0)) * 90dvh)",
   minHeight: "100%",
   padding: theme.spacing(2),
   [theme.breakpoints.up("sm")]: {
@@ -14,8 +14,6 @@ export const Container = styled(Stack)(({ theme }) => ({
     position: "absolute",
     zIndex: -1,
     inset: 0,
-    backgroundImage:
-      "radial-gradient(ellipse at 50% 50%, hsl(210, 100%, 97%), hsl(0, 0%, 100%))",
     backgroundRepeat: "no-repeat",
     ...theme.applyStyles("dark", {
       backgroundImage:
@@ -24,7 +22,7 @@ export const Container = styled(Stack)(({ theme }) => ({
 
     ...theme.applyStyles("light", {
       backgroundImage:
-        "radial-gradient(at 50% 50%, hsla(120, 100%, 85%, 0.5), hsl(220, 30%, 100%))",
+        "radial-gradient(at 50% 50%, hsla(130, 20%, 85%, 0.5), hsl(250, 20%, 90%))",
     }),
   },
 }));
