@@ -1,42 +1,41 @@
 import * as React from "react";
-import {
-  Button,
-  Link,
-  Box,
-  Typography,
-  Snackbar,
-  SnackbarContent,
-} from "@mui/material";
+import { Button, Link, Box, Typography, CircularProgress } from "@mui/material";
 import Wrapper from "@/components/wrapper";
 import AuthInput from "@/components/input";
 import { CardContainer, Container } from "@/components/container";
 import baseApi from "@/config/baseApi";
 import axios from "axios";
+import { useRouter } from "next/router";
+import useAuthStore from "@/context/useAuthStore";
+import Notification from "@/components/notification";
 
 interface inputProps {
   email?: string;
   password?: string;
   repassword?: string;
 }
-interface errorProps {
-  error: boolean | false;
-  errorItem: string;
+interface notifyProps {
+  notify: boolean | false;
+  notifyItem: string;
   message: string;
 }
 
 const Register = () => {
   const [inputData, setInputData] = React.useState<inputProps | null>(null);
-  const [error, setError] = React.useState<errorProps | null>(null);
+  const [notify, setNotify] = React.useState<notifyProps | null>(null);
+  const router = useRouter();
+  const loading = useAuthStore((state) => state.loading);
+  const setLoading = useAuthStore((state) => state.setLoading);
 
   const validateField = (name: string, value: string): void => {
     if (name === "password" && value.length < 6) {
-      setError({
-        error: true,
-        errorItem: name,
+      setNotify({
+        notify: true,
+        notifyItem: "error",
         message: "پسورد باید بیشتر از ۶ حروف یا عدد باشد!",
       });
     } else {
-      setError(null);
+      setNotify(null);
     }
   };
 
@@ -55,35 +54,46 @@ const Register = () => {
     event.preventDefault();
 
     if (inputData?.repassword !== inputData?.password) {
-      setError({
-        error: true,
-        errorItem: "repassword",
+      setNotify({
+        notify: true,
+        notifyItem: "error",
         message:
           "مثل این که تکرار رمزت با رمزت یکی نیستش یه بار دیگه بررسی کن لطفا!",
       });
       return;
     }
 
-    if (!error) {
+    if (!notify) {
       try {
+        setLoading(true);
         await baseApi.post("/users/register/", {
           email: inputData?.email,
           password: inputData?.password,
         });
+
+        setNotify({
+          notify: true,
+          message: "ثبت نام با موفقیت انجام شد.",
+          notifyItem: "success",
+        });
+
+        router.push("/auth/login/");
       } catch (err) {
         if (axios.isAxiosError(err) && err.response?.status === 400) {
-          setError({
-            error: true,
+          setNotify({
+            notify: true,
             message: "این ایمیل از قبل ثبت نام کرده!",
-            errorItem: "request_item",
+            notifyItem: "error",
           });
         } else {
-          setError({
-            error: true,
+          setNotify({
+            notify: true,
             message: "مشکلی رخ داده اگر ممکنه بعدا تلاش کنید.",
-            errorItem: "none_error",
+            notifyItem: "error",
           });
         }
+      } finally {
+        setLoading(false);
       }
     }
   };
@@ -92,14 +102,14 @@ const Register = () => {
     <Wrapper>
       <Container direction="column" justifyContent="space-between">
         <CardContainer variant="outlined">
-          {error?.error && (
-            <Snackbar open={error.error} autoHideDuration={4000}>
-              <SnackbarContent
-                sx={{ background: "#FA4032", color: "white" }}
-                message={error.message}
-              />
-            </Snackbar>
-          )}
+          {notify?.notify ? (
+            <Notification
+              open={notify.notify}
+              message={notify.message}
+              notifyItem={notify.notifyItem}
+            />
+          ) : null}
+
           <Typography
             component="h2"
             variant="h2"
@@ -155,9 +165,9 @@ const Register = () => {
               fullWidth
               variant="contained"
               sx={{ paddingY: "8px", fontSize: "18px" }}
-              disabled={error?.error ? true : false}
+              disabled={notify?.notify ? true : false}
             >
-              ثبت نام
+              {loading ? <CircularProgress /> : "ثبت نام"}
             </Button>
             <Typography sx={{ textAlign: "center" }}>
               حساب کاربری دارید؟{" "}

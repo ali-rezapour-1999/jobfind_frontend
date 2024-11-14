@@ -1,108 +1,97 @@
-import Wrapper from "@/components/wrapper";
 import * as React from "react";
-import Box from "@mui/material/Box";
-import {
-  Button,
-  FormControl,
-  Link,
-  TextField,
-  Typography,
-  Stack,
-  styled,
-  FormLabel,
-} from "@mui/material";
-import MuiCard from "@mui/material/Card";
+import { Button, Link, Box, Typography, CircularProgress } from "@mui/material";
+import Wrapper from "@/components/wrapper";
+import AuthInput from "@/components/input";
+import { CardContainer, Container } from "@/components/container";
+import baseApi from "@/config/baseApi";
+import axios from "axios";
+import { useRouter } from "next/router";
+import useAuthStore from "@/context/useAuthStore";
+import Notification from "@/components/notification";
 
-const Card = styled(MuiCard)(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
-  alignSelf: "center",
-  width: "100%",
-  padding: theme.spacing(4),
-  gap: theme.spacing(2),
-  margin: "auto",
-  borderRadius: "20px",
-  boxShadow:
-    "hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px",
-  [theme.breakpoints.up("sm")]: {
-    maxWidth: "450px",
-  },
-  ...theme.applyStyles("dark", {
-    background: "rgba(0,0,0,.3)",
-    boxShadow:
-      "hsla(220, 30%, 5%, 0.5) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.08) 0px 15px 35px -5px",
-  }),
-}));
-
-const SignInContainer = styled(Stack)(({ theme }) => ({
-  height: "calc((1 - var(--template-frame-height, 0)) * 80dvh)",
-  minHeight: "100%",
-  padding: theme.spacing(2),
-  [theme.breakpoints.up("sm")]: {
-    padding: theme.spacing(4),
-  },
-  "&::before": {
-    content: '""',
-    display: "block",
-    position: "absolute",
-    zIndex: -1,
-    inset: 0,
-    backgroundImage:
-      "radial-gradient(ellipse at 50% 50%, hsl(210, 100%, 97%), hsl(0, 0%, 100%))",
-    backgroundRepeat: "no-repeat",
-    ...theme.applyStyles("dark", {
-      backgroundImage:
-        "radial-gradient(at 50% 50%, hsla(210, 100%, 16%, 0.5), hsl(220, 30%, 5%))",
-    }),
-  },
-}));
+interface inputProps {
+  email?: string;
+  password?: string;
+  repassword?: string;
+}
+interface notifyProps {
+  notify: boolean | false;
+  notifyItem: string;
+  message: string;
+}
 
 const Register = () => {
-  const [passwordError, setPasswordError] = React.useState(false);
-  const [passwordErrorMessage, setPasswordErrorMessage] = React.useState("");
-  const [numberError, setNumberError] = React.useState(false);
-  const [numberErrorMessage, setNumberErrorMessage] = React.useState("");
+  const [inputData, setInputData] = React.useState<inputProps | null>(null);
+  const [notify, setNotify] = React.useState<notifyProps | null>(null);
+  const router = useRouter();
+  const loading = useAuthStore((state) => state.loading);
+  const setLoading = useAuthStore((state) => state.setLoading);
+  const setUser = useAuthStore((state) => state.login);
 
-  const validateInputs = () => {
-    const phone_number = document.getElementById(
-      "phone_number",
-    ) as HTMLInputElement;
-    const password = document.getElementById("password") as HTMLInputElement;
-
-    let isValid = true;
-
-    if (!password.value || password.value.length < 6) {
-      setPasswordError(true);
-      setPasswordErrorMessage("رمز عبور باید بیشتر از ۶ رقم باشه!");
-      isValid = false;
+  const validateField = (name: string, value: string): void => {
+    if (name === "password" && value.length < 6) {
+      setNotify({
+        notify: true,
+        notifyItem: "error",
+        message: "پسورد باید بیشتر از ۶ حروف یا عدد باشد!",
+      });
     } else {
-      setPasswordError(false);
-      setPasswordErrorMessage("");
+      setNotify(null);
     }
-
-    if (!phone_number.value || phone_number.value.length < 1) {
-      setNumberError(true);
-      setNumberErrorMessage("شماره همراه is required.");
-      isValid = false;
-    } else {
-      setNumberError(false);
-      setNumberErrorMessage("");
-    }
-
-    return isValid;
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    if (numberError || passwordError) {
-      event.preventDefault();
-      return;
+  const inputHandler = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    const { name, value } = e.target;
+
+    setInputData((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+
+    validateField(name, value);
+  };
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (!notify) {
+      try {
+        setLoading(true);
+        const res = await baseApi.post("/users/login/", {
+          email: inputData?.email,
+          password: inputData?.password,
+        });
+        const token = res.data;
+        localStorage.setItem("authToken", token.access);
+        setUser(inputData?.email || "", token.access);
+
+        setNotify({
+          notify: true,
+          message: "ورود با موقثیت صورت گرفت",
+          notifyItem: "success",
+        });
+
+        router.push("/");
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
   return (
     <Wrapper>
-      <SignInContainer direction="column" justifyContent="space-between">
-        <Card variant="outlined">
+      <Container direction="column" justifyContent="space-between">
+        <CardContainer variant="outlined">
+          {notify?.notify ? (
+            <Notification
+              open={notify.notify}
+              message={notify.message}
+              notifyItem={notify.notifyItem}
+            />
+          ) : null}
+
           <Typography
             component="h2"
             variant="h2"
@@ -120,65 +109,52 @@ const Register = () => {
             onSubmit={handleSubmit}
             sx={{ display: "flex", flexDirection: "column", gap: 2 }}
           >
-            <FormControl>
-              <FormLabel htmlFor="phone_number" sx={{ mb: "10px" }}>
-                شماره همراه
-              </FormLabel>
-              <TextField
-                autoComplete="email"
-                name="email"
-                required
-                fullWidth
-                id="phone_number"
-                placeholder="شماره همراه را بدون صفر وارد کنید."
-                error={numberError}
-                helperText={numberErrorMessage}
-                color={numberError ? "error" : "primary"}
-                sx={{ fontSize: "14px" }}
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel htmlFor="password" sx={{ mb: "10px" }}>
-                کلمه عبور
-              </FormLabel>
-              <TextField
-                required
-                fullWidth
-                name="password"
-                placeholder="•••••••••"
-                type="password"
-                id="password"
-                autoComplete="new-password"
-                variant="outlined"
-                error={passwordError}
-                helperText={passwordErrorMessage}
-                color={passwordError ? "error" : "primary"}
-              />
-            </FormControl>
+            <AuthInput
+              lable="ایمیل"
+              id="email"
+              name="email"
+              type="email"
+              placeholder="ایمیل خود را وارد کنید."
+              required={true}
+              color="primary"
+              inputchangeHandler={inputHandler}
+            />
+
+            <AuthInput
+              lable="رمز عبور"
+              id="password"
+              name="password"
+              type="password"
+              required={true}
+              placeholder="رمز عبور خود را وارد کنید"
+              color="primary"
+              inputchangeHandler={inputHandler}
+            />
+
             <Button
               type="submit"
               fullWidth
               variant="contained"
-              onClick={validateInputs}
               sx={{ paddingY: "8px", fontSize: "18px" }}
+              disabled={notify?.notify ? true : false}
             >
-              ورود
+              {loading ? <CircularProgress /> : "ورود"}
             </Button>
             <Typography sx={{ textAlign: "center" }}>
-              حساب کاربری ندارم؟{" "}
+              حساب کاربری ندارید؟{" "}
               <span>
                 <Link
-                  href="/auth/register"
+                  href="/auth/login/"
                   variant="body2"
-                  sx={{ alignSelf: "center", fontSize: "17px" }}
+                  sx={{ alignSelf: "center" }}
                 >
-                  ورود
+                  ثبت نام
                 </Link>
               </span>
             </Typography>
           </Box>
-        </Card>
-      </SignInContainer>
+        </CardContainer>
+      </Container>
     </Wrapper>
   );
 };
