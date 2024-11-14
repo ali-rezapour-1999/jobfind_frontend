@@ -10,9 +10,11 @@ import {
 import Wrapper from "@/components/wrapper";
 import AuthInput from "@/components/input";
 import { CardContainer, Container } from "@/components/container";
+import baseApi from "@/config/baseApi";
+import axios from "axios";
 
 interface inputProps {
-  phone_number?: string;
+  email?: string;
   password?: string;
   repassword?: string;
 }
@@ -25,19 +27,9 @@ interface errorProps {
 const Register = () => {
   const [inputData, setInputData] = React.useState<inputProps | null>(null);
   const [error, setError] = React.useState<errorProps | null>(null);
-  const phoneValidation = (phone: string): boolean => {
-    const iranPhoneNumberRegex = /^9[0-9]{9}$/;
-    return iranPhoneNumberRegex.test(phone);
-  };
 
   const validateField = (name: string, value: string): void => {
-    if (name === "phone_number" && value.startsWith("0")) {
-      setError({
-        error: true,
-        errorItem: name,
-        message: "لطفا شماره همراه بدون 0 و صحیح وارد کنید.",
-      });
-    } else if (name === "password" && value.length < 6) {
+    if (name === "password" && value.length < 6) {
       setError({
         error: true,
         errorItem: name,
@@ -59,13 +51,7 @@ const Register = () => {
     validateField(name, value);
   };
 
-  React.useEffect(() => {
-    if (inputData?.phone_number && !inputData?.phone_number.startsWith("0")) {
-      setError(null);
-    }
-  }, [inputData?.phone_number]);
-
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (inputData?.repassword !== inputData?.password) {
@@ -75,19 +61,30 @@ const Register = () => {
         message:
           "مثل این که تکرار رمزت با رمزت یکی نیستش یه بار دیگه بررسی کن لطفا!",
       });
-
       return;
-    }
-    if (!inputData?.phone_number || !phoneValidation(inputData.phone_number)) {
-      setError({
-        error: true,
-        errorItem: "phone_number",
-        message: "شماره همراه وارد شده صحیح نیست!",
-      });
     }
 
     if (!error) {
-      console.log("Form submitted successfully!");
+      try {
+        await baseApi.post("/users/register/", {
+          email: inputData?.email,
+          password: inputData?.password,
+        });
+      } catch (err) {
+        if (axios.isAxiosError(err) && err.response?.status === 400) {
+          setError({
+            error: true,
+            message: "این ایمیل از قبل ثبت نام کرده!",
+            errorItem: "request_item",
+          });
+        } else {
+          setError({
+            error: true,
+            message: "مشکلی رخ داده اگر ممکنه بعدا تلاش کنید.",
+            errorItem: "none_error",
+          });
+        }
+      }
     }
   };
 
@@ -121,11 +118,11 @@ const Register = () => {
             sx={{ display: "flex", flexDirection: "column", gap: 2 }}
           >
             <AuthInput
-              lable="شماره همراه"
-              id="phone_number"
-              name="phone_number"
-              type="text"
-              placeholder="شماره همراه خود را وارد کنید"
+              lable="ایمیل"
+              id="email"
+              name="email"
+              type="email"
+              placeholder="ایمیل خود را وارد کنید."
               required={true}
               color="primary"
               inputchangeHandler={inputHandler}
