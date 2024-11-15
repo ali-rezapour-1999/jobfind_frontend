@@ -25,7 +25,7 @@ const Navbar: React.FC<NavbarProps> = ({ toggleTheme, themeMode }) => {
           aria-label="jump to profile"
           color="inherit"
           LinkComponent={Link}
-          href={router.pathname === "/" ? "/auth/register" : "/"}
+          href={router.pathname === "/" ? "/auth/login" : "/"}
           sx={{
             backgroundColor: "primary.light",
             padding: 0.8,

@@ -13,11 +13,14 @@ const useAuthStore = create<AuthState>((set) => ({
   loading: false,
   login: (email, token) => {
     set({ user: { email, token }, loading: false });
-    localStorage.setItem("auth_token", token);
+    localStorage.setItem(
+      "authToken",
+      JSON.stringify({ token: token, email: email }),
+    );
   },
   logout: () => {
     set({ user: null });
-    localStorage.removeItem("auth_token");
+    localStorage.removeItem("authToken");
   },
   setLoading: (loading) => set({ loading }),
 }));

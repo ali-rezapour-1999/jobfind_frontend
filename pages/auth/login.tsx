@@ -70,7 +70,6 @@ const Register = () => {
           password: inputData?.password,
         });
         const token = res.data;
-        localStorage.setItem("authToken", token.access);
         localStorage.setItem("item_pro", token.profile_id);
         setUser(inputData?.email || "", token.access);
 
