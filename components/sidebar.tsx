@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   Box,
+  Button,
   List,
   ListItem,
   ListItemButton,
@@ -10,6 +11,7 @@ import {
 import Image from "next/image";
 import { CardContainer } from "./container";
 import userImagePlaceholder from "@/public/user.svg";
+import ModalContainer from "./modal";
 
 interface Props {
   profileNavigatorHandler: (slug: string) => void;
@@ -23,6 +25,7 @@ const SideBar: React.FC<Props> = ({
   userUrl,
 }) => {
   const [email, setEmail] = useState<string>("");
+  const [showModal, setShowModal] = useState<boolean>(false);
 
   const menuListItem = [
     { slug: "detail", title: "حساب کاربری" },
@@ -102,6 +105,22 @@ const SideBar: React.FC<Props> = ({
           </ListItem>
         ))}
       </List>
+      <ModalContainer
+        show={showModal}
+        closeHanlder={() => setShowModal(false)}
+      />
+      <Button
+        sx={{
+          padding: "10px",
+          color: "white",
+          fontWeight: "bold",
+          background: "#FA4032 ",
+          borderRadius: "10px",
+        }}
+        onClick={() => setShowModal(true)}
+      >
+        خروج از حساب کاربری
+      </Button>
     </CardContainer>
   );
 };
