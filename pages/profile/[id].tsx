@@ -66,6 +66,7 @@ const Dashbord = () => {
           <SideBar
             profileNavigatorHandler={setProfileNavigate}
             phone={infoData ? infoData?.phone_number : ""}
+            userUrl={infoData ? infoData?.profile_image : ""}
           />
         </Grid2>
         <Grid2 size={8}>

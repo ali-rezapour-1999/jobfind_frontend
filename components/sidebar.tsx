@@ -6,17 +6,23 @@ import {
   ListItemButton,
   Stack,
   Typography,
+  Icon,
 } from "@mui/material";
 import Image from "next/image";
 import { CardContainer } from "./container";
-import user from "@/public/user.jpg";
+import { User } from "lucide-react";
 
 interface Props {
   profileNavigatorHandler: (slug: string) => void;
   phone: string;
+  userUrl: string | null;
 }
 
-const SideBar: React.FC<Props> = ({ profileNavigatorHandler, phone }) => {
+const SideBar: React.FC<Props> = ({
+  profileNavigatorHandler,
+  phone,
+  userUrl,
+}) => {
   const [email, setEmail] = useState<string>("");
 
   const menuListItem = [
@@ -40,18 +46,23 @@ const SideBar: React.FC<Props> = ({ profileNavigatorHandler, phone }) => {
   return (
     <CardContainer>
       <Box width="100%" height="200px">
-        <Image
-          src={user}
-          alt="userimage"
-          width={500}
-          height={500}
-          style={{
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-            borderRadius: "20px",
-          }}
-        />
+        {userUrl ? (
+          <Image
+            src={userUrl}
+            alt="userimage"
+            width={500}
+            height={500}
+            priority={true}
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              borderRadius: "20px",
+            }}
+          />
+        ) : (
+          <Icon component={User} />
+        )}
       </Box>
       <Stack spacing={1} color="primary.main" padding="0 10px">
         <Typography fontSize="15px" fontWeight="bold">
