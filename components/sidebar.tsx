@@ -6,15 +6,14 @@ import {
   ListItemButton,
   Stack,
   Typography,
-  Icon,
 } from "@mui/material";
 import Image from "next/image";
 import { CardContainer } from "./container";
-import { User } from "lucide-react";
+import userImagePlaceholder from "@/public/user.svg";
 
 interface Props {
   profileNavigatorHandler: (slug: string) => void;
-  phone: string;
+  phone: string | "-";
   userUrl: string | null;
 }
 
@@ -27,7 +26,7 @@ const SideBar: React.FC<Props> = ({
 
   const menuListItem = [
     { slug: "detail", title: "حساب کاربری" },
-    { slug: "settings", title: "Settings" },
+    { slug: "job", title: "درخواست های شما" },
   ];
 
   useEffect(() => {
@@ -45,7 +44,7 @@ const SideBar: React.FC<Props> = ({
   }, []);
   return (
     <CardContainer>
-      <Box width="100%" height="200px">
+      <Box width="100%" height="250px">
         {userUrl ? (
           <Image
             src={userUrl}
@@ -61,7 +60,19 @@ const SideBar: React.FC<Props> = ({
             }}
           />
         ) : (
-          <Icon component={User} />
+          <Image
+            src={userImagePlaceholder}
+            alt="userimage"
+            width={500}
+            height={500}
+            priority={true}
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              borderRadius: "20px",
+            }}
+          />
         )}
       </Box>
       <Stack spacing={1} color="primary.main" padding="0 10px">
@@ -70,7 +81,7 @@ const SideBar: React.FC<Props> = ({
         </Typography>
 
         <Typography fontSize="15px" fontWeight="bold">
-          {"شماره همراه : " + phone || null}
+          شماره همراه : {phone != null ? phone : "-----------"}
         </Typography>
       </Stack>
       <List sx={{ gap: "2px" }}>

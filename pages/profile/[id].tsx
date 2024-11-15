@@ -5,6 +5,7 @@ import baseApi from "@/config/baseApi";
 import { CircularProgress, Grid2 } from "@mui/material";
 import SideBar from "@/components/sidebar";
 import ProfileDetail from "@/components/profileDetail";
+import JobRequest from "@/components/user/jobRequest";
 
 interface detail {
   address: string;
@@ -39,26 +40,32 @@ const Dashbord = () => {
   const [profileNavigate, setProfileNavigate] = useState<string | null>(
     "detail",
   );
+
+  const [infoData, setInfoData] = useState<detail | null>(null);
   const router = useRouter();
   const { id } = router.query;
-  const [infoData, setInfoData] = useState<detail | null>(null);
   React.useEffect(() => {
     if (id) {
       const GetData = async () => {
         const res = await baseApi.get(`/profile/profiles/${id}/`);
         setInfoData(res.data);
       };
-      const Navigate = () => {
-        if (profileNavigate === "detail") {
-          return ProfileDetail;
-        }
-      };
       GetData();
-      Navigate();
     } else {
     }
-  }, [id, router, profileNavigate]);
+  }, [id, router]);
 
+  const Navigate = () => {
+    if (profileNavigate === "detail") {
+      return infoData ? (
+        <ProfileDetail info={infoData} />
+      ) : (
+        <CircularProgress />
+      );
+    } else if (profileNavigate === "job") {
+      return <JobRequest />;
+    }
+  };
   return (
     <Wrapper>
       <Grid2 container spacing={2}>
@@ -70,7 +77,7 @@ const Dashbord = () => {
           />
         </Grid2>
         <Grid2 size={8}>
-          {infoData ? <ProfileDetail info={infoData} /> : <CircularProgress />}
+          <Navigate />
         </Grid2>
       </Grid2>
     </Wrapper>
